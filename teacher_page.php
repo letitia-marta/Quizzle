@@ -67,7 +67,7 @@
                     <img src="images/cursuri.png" alt="Cursuri" class="button-image">
                     <span>Classes</span>
                 </a>
-                <a href="tests.php" class="dashboard-button button-with-image">
+                <a href="new_test.php" class="dashboard-button button-with-image">
                     <img src="images/test.png" alt="TestNou" class="button-image" style="margin-left: 17px">
                     <span>New test</span>
                 </a>
@@ -99,6 +99,7 @@
         </div>
 
         <script>
+
             const popup = document.getElementById('popup');
             const openPopup = document.getElementById('open-popup');
             const closePopup = document.getElementById('close-popup');
