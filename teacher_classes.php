@@ -2,11 +2,18 @@
     include 'config.php';
     session_start();
 
-    $teacher_id = $_SESSION['teacher_id'];
+    $admin_id = $_SESSION['teacher_id'];
 
-    if (!isset($teacher_id)) {
+    if (!isset($admin_id)) {
         header('location:login.php');
         exit();
+    }
+
+    $query = "SELECT * FROM classes WHERE teacher = '$admin_id'";
+    $result = mysqli_query($conn, $query);
+
+    if (!$result) {
+        die("Query failed: " . mysqli_error($conn));
     }
 
     function generateClassCode($length = 6) {
@@ -31,15 +38,13 @@
                 $result = mysqli_query($conn, $checkQuery);
             }
 
-            $query = "INSERT INTO classes (class_name, teacher, class_code) VALUES ('$class_name', '$teacher_id', '$class_code')";
+            $query = "INSERT INTO classes (class_name, teacher, class_code) VALUES ('$class_name', '$admin_id', '$class_code')";
             if (mysqli_query($conn, $query)) {
                 $_SESSION['message'] = "Class created successfully!";
-                echo "Class inserted successfully. Redirecting...";
                 header("Location: teacher_classes.php");
                 exit();
             } else {
                 $_SESSION['message'] = "Failed to create class!";
-                echo "Error inserting class: " . mysqli_error($conn);
                 header("Location: teacher_classes.php");
                 exit();
             }
@@ -49,12 +54,6 @@
             exit();
         }
     }
-
-    $query = "SELECT * FROM classes WHERE teacher = '$teacher_id'";
-    $result1 = mysqli_query($conn, $query);
-
-    if (!$result1)
-        echo "<p>No classes found.</p>";
 ?>
 
 <!DOCTYPE html>
@@ -62,21 +61,21 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Your Classes</title>
+        <title>Your Classes - Teacher</title>
         <link rel="stylesheet" href="css/test.css">
     </head>
     <body>
         <?php include 'teacher_header.php'; ?>
 
         <section class="dashboard">
-            <h2 class="title">My Classes</h2>
+            <h2>Your Classes</h2>
             <div class="class-grid">
                 <?php
-                    if (mysqli_num_rows($result1) > 0) {
-                        while ($row = mysqli_fetch_assoc($result1)) {
-                            echo "<div class='class-card' onclick='window.location.href=\"class_details.php?class_id=" . $row['class_id'] . "\"'>
+                    if (mysqli_num_rows($result) > 0) {
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo "<div class='class-card' onclick='window.location.href=\"teacher_class_details.php?class_id=" . $row['class_id'] . "\"'>
                                     <h3>" . htmlspecialchars($row['class_name']) . "</h3>
-                                    <p>Click to view details</p>
+                                    <p>Class Code: " . htmlspecialchars($row['class_code']) . "</p>
                                 </div>";
                         }
                     } else {
@@ -142,6 +141,5 @@
                 }
             };
         </script>
-
     </body>
 </html>
