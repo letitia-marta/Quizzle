@@ -1,19 +1,19 @@
 <?php
-    include 'config.php';
+    include 'config.php'; 
     session_start();
 
     $admin_id = $_SESSION['teacher_id'];
 
     if (!isset($admin_id)) {
         header('location:login.php');
-        exit();
+        exit(); 
     }
 
     $query = "SELECT * FROM classes WHERE teacher = '$admin_id'";
     $result = mysqli_query($conn, $query);
 
     if (!$result) {
-        die("Query failed: " . mysqli_error($conn));
+        die("Query failed: " . mysqli_error($conn)); 
     }
 
     function generateClassCode($length = 6) {
@@ -26,9 +26,11 @@
         return $randomCode;
     }
 
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_class'])) {
         $class_name = mysqli_real_escape_string($conn, $_POST['class_name']);
         if (!empty($class_name)) {
+            
             $class_code = generateClassCode();
 
             $checkQuery = "SELECT class_code FROM classes WHERE class_code = '$class_code'";
@@ -38,18 +40,19 @@
                 $result = mysqli_query($conn, $checkQuery);
             }
 
+
             $query = "INSERT INTO classes (class_name, teacher, class_code) VALUES ('$class_name', '$admin_id', '$class_code')";
             if (mysqli_query($conn, $query)) {
-                $_SESSION['message'] = "Class created successfully!";
+                $_SESSION['message'] = "Class created successfully!"; 
                 header("Location: teacher_classes.php");
-                exit();
+                exit(); 
             } else {
-                $_SESSION['message'] = "Failed to create class!";
+                $_SESSION['message'] = "Failed to create class!"; 
                 header("Location: teacher_classes.php");
                 exit();
             }
         } else {
-            $_SESSION['message'] = "Class name cannot be empty!";
+            $_SESSION['message'] = "Class name cannot be empty!"; 
             header("Location: teacher_classes.php");
             exit();
         }
@@ -68,25 +71,32 @@
         <?php include 'teacher_header.php'; ?>
 
         <section class="dashboard">
-            <h2>Your Classes</h2>
+
+            <div class="student-list" style="display: flex; justify-content: center; align-items: center; margin-bottom:60px;">
+                <h3>Your Classes</h3>
+            </div>
+
             <div class="class-grid">
                 <?php
-                    if (mysqli_num_rows($result) > 0) {
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            echo "<div class='class-card' onclick='window.location.href=\"teacher_class_details.php?class_id=" . $row['class_id'] . "\"'>
-                                    <h3>" . htmlspecialchars($row['class_name']) . "</h3>
-                                    <p>Class Code: " . htmlspecialchars($row['class_code']) . "</p>
-                                </div>";
-                        }
-                    } else {
-                        echo "<p>No classes found.</p>";
+
+                if (mysqli_num_rows($result) > 0) {
+
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        echo "<div class='class-card' onclick='window.location.href=\"teacher_class_details.php?class_id=" . $row['class_id'] . "\"'>
+                                <h3>" . htmlspecialchars($row['class_name']) . "</h3>
+                                <p>Class Code: " . htmlspecialchars($row['class_code']) . "</p>
+                            </div>";
                     }
+                } else {
+                    echo "<p>No classes found.</p>";
+                }
                 ?>
             </div>
         </section>
 
         <a href="#" id="open-popup" class="plus">+<span class="tooltip-text">Create a class</span></a>
 
+    
         <div class="popup" id="popup">
             <div class="popup-content">
                 <span class="close-btn" id="close-popup">&times;</span>
@@ -95,11 +105,12 @@
                     <input type="text" name="class_name" placeholder="Enter class name" required>
                     <button type="submit" name="create_class">Create</button>
                 </form>
+
                 <?php if (isset($_SESSION['message'])): ?>
                     <div class="message <?php echo (strpos($_SESSION['message'], 'successfully') !== false) ? 'success' : 'error'; ?>" id="form-message">
                         <?php echo $_SESSION['message']; ?>
                     </div>
-                    <?php unset($_SESSION['message']); ?>
+                    <?php unset($_SESSION['message']);  ?>
                 <?php endif; ?>
             </div>
         </div>
@@ -114,14 +125,14 @@
                 e.preventDefault();
                 popup.style.display = 'flex';
                 if (formMessage) {
-                    formMessage.style.display = 'none';
+                    formMessage.style.display = 'none'; 
                 }
             });
 
             closePopup.addEventListener('click', () => {
                 popup.style.display = 'none';
                 if (formMessage) {
-                    formMessage.style.display = 'none';
+                    formMessage.style.display = 'none'; 
                 }
             });
 
@@ -129,15 +140,15 @@
                 if (event.target === popup) {
                     popup.style.display = 'none';
                     if (formMessage) {
-                        formMessage.style.display = 'none';
+                        formMessage.style.display = 'none'; 
                     }
                 }
             });
 
             window.onload = function() {
                 if (formMessage && formMessage.textContent.trim() !== "") {
-                    popup.style.display = 'flex';
-                    formMessage.style.display = 'block';
+                    popup.style.display = 'flex'; 
+                    formMessage.style.display = 'block'; 
                 }
             };
         </script>
