@@ -12,6 +12,7 @@
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['join_class'])) {
         $class_code = mysqli_real_escape_string($conn, $_POST['class_code']);
         if (!empty($class_code)) {
+
             $class_query = "SELECT class_id FROM classes WHERE class_code = '$class_code'";
             $class_result = mysqli_query($conn, $class_query);
 
@@ -23,6 +24,7 @@
                 $enrollment_result = mysqli_query($conn, $check_enrollment);
 
                 if (mysqli_num_rows($enrollment_result) == 0) {
+
                     $enrollment_date = date('Y-m-d H:i:s');
                     $enroll_query = "INSERT INTO student_classes (user_id, class_id, enrollment_date) VALUES ('$student_id', '$class_id', '$enrollment_date')";
 
