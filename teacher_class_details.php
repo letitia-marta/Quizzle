@@ -34,7 +34,7 @@
         $student_result = mysqli_query($conn, $student_query);
         
         if (!$student_result) {
-            die("Query failed: " . mysqli_error($conn));
+            die("Query failed: " . mysqli_error($conn)); 
         }
     } else {
         echo "No class selected.";
@@ -45,7 +45,30 @@
     $test_result = mysqli_query($conn, $test_query);
 
     if (!$test_result) {
-        die("Query failed: " . mysqli_error($conn));
+        die("Query failed: " . mysqli_error($conn)); 
+    }
+
+    if (isset($_POST['delete_test_id'])) {
+        $test_id_to_delete = intval($_POST['delete_test_id']);
+
+        if (isset($_GET['class_id'])) {
+            $class_id = $_GET['class_id'];
+        } else {
+            die("Class ID is missing. Unable to delete test.");
+        }
+
+
+        $delete_options_query = "DELETE FROM question_options WHERE question_id IN (SELECT question_id FROM questions WHERE test_id = '$test_id_to_delete')";
+        mysqli_query($conn, $delete_options_query);
+
+        $delete_questions_query = "DELETE FROM questions WHERE test_id = '$test_id_to_delete'";
+        mysqli_query($conn, $delete_questions_query);
+
+        $delete_test_query = "DELETE FROM tests WHERE test_id = '$test_id_to_delete'";
+        mysqli_query($conn, $delete_test_query);
+
+        header("Location: teacher_class_details.php?class_id=$class_id");
+        exit();
     }
 ?>
 
@@ -72,6 +95,7 @@
             function confirmRemove(studentId) {
                 const confirmation = confirm("Are you sure you want to remove this student from the class?");
                 if (confirmation) {
+                    
                     document.getElementById("remove-form-" + studentId).submit();
                 }
             }
@@ -79,6 +103,7 @@
     </head>
     <body>
         <?php
+
         if (isset($admin_id)) {
             include 'teacher_header.php';
         } 
@@ -96,6 +121,7 @@
                 <button id="toggle-students" onclick="toggleStudentList()">Show Students</button>
                 <ul id="student-list" style="display: none;">
                     <?php
+
                     if (mysqli_num_rows($student_result) > 0) {
                         while ($student = mysqli_fetch_assoc($student_result)) {
                             echo "<li class='student-item'>" . htmlspecialchars($student['name']) . " - " . htmlspecialchars($student['email']) . "
@@ -117,19 +143,23 @@
             <h3>Tests Created for this Class:</h3>
             <ul>
                 <?php
-                if (mysqli_num_rows($test_result) > 0) {
-                    while ($test = mysqli_fetch_assoc($test_result)) {
-                        echo "<li class='test-item'>
-                                <strong>" . htmlspecialchars($test['test_name']) . "</strong>
-                                <p>Description: " . htmlspecialchars($test['test_description']) . "</p>
-                                <p>Total Points: " . htmlspecialchars($test['total_points']) . "</p>
-                                <p>Due Date: " . htmlspecialchars($test['due_date']) . "</p>
-                                <a href='view_test.php?test_id=" . $test['test_id'] . "'>View Test</a>
-                            </li>";
+                    if (mysqli_num_rows($test_result) > 0) {
+                        while ($test = mysqli_fetch_assoc($test_result)) {
+                            echo "<li class='test-item'>
+                                    <strong>" . htmlspecialchars($test['test_name']) . "</strong>
+                                    <p>Description: " . htmlspecialchars($test['test_description']) . "</p>
+                                    <p>Total Points: " . htmlspecialchars($test['total_points']) . "</p>
+                                    <p>Due Date: " . htmlspecialchars($test['due_date']) . "</p>
+                                    <a href='teacher_view_test.php?test_id=" . $test['test_id'] . "'>View Test</a>
+                                    <form method='POST' style='display:inline-block;'>
+                                        <input type='hidden' name='delete_test_id' value='" . $test['test_id'] . "'>
+                                        <button class='delete_test' type='submit' onclick='return confirm(\"Are you sure you want to delete this test?\")'>Delete Test</button>
+                                    </form>
+                                </li>";
+                        }
+                    } else {
+                        echo "<p class='no-tests'>No tests created for this class.</p>";
                     }
-                } else {
-                    echo "<p class='no-tests'>No tests created for this class.</p>";
-                }
                 ?>
             </ul>
         </div>
