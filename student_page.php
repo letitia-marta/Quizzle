@@ -4,42 +4,54 @@
 
     $student_id = $_SESSION['student_id'];
 
-    if (!isset($student_id)) {
+    if (!isset($student_id))
+    {
         header('location:login.php');
         exit;
     }
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['join_class'])) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['join_class']))
+    {
         $class_code = mysqli_real_escape_string($conn, $_POST['class_code']);
-        if (!empty($class_code)) {
-
+        if (!empty($class_code))
+        {
             $class_query = "SELECT class_id FROM classes WHERE class_code = '$class_code'";
             $class_result = mysqli_query($conn, $class_query);
 
-            if (mysqli_num_rows($class_result) > 0) {
+            if (mysqli_num_rows($class_result) > 0)
+            {
                 $class_data = mysqli_fetch_assoc($class_result);
                 $class_id = $class_data['class_id'];
 
                 $check_enrollment = "SELECT * FROM student_classes WHERE user_id = '$student_id' AND class_id = '$class_id'";
                 $enrollment_result = mysqli_query($conn, $check_enrollment);
 
-                if (mysqli_num_rows($enrollment_result) == 0) {
-
+                if (mysqli_num_rows($enrollment_result) == 0)
+                {
                     $enrollment_date = date('Y-m-d H:i:s');
                     $enroll_query = "INSERT INTO student_classes (user_id, class_id, enrollment_date) VALUES ('$student_id', '$class_id', '$enrollment_date')";
 
-                    if (mysqli_query($conn, $enroll_query)) {
+                    if (mysqli_query($conn, $enroll_query))
+                    {
                         $message = "Successfully joined the class!";
-                    } else {
+                    }
+                    else
+                    {
                         $message = "Failed to join the class. Please try again.";
                     }
-                } else {
+                }
+                else
+                {
                     $message = "You are already enrolled in this class.";
                 }
-            } else {
+            }
+            else
+            {
                 $message = "Invalid class code. Please try again.";
             }
-        } else {
+        }
+        else
+        {
             $message = "Class code cannot be empty.";
         }
     }
@@ -49,7 +61,8 @@
             WHERE sc.user_id = '$student_id'";
     $result = mysqli_query($conn, $query);
 
-    if (!$result) {
+    if (!$result)
+    {
         die("Query failed: " . mysqli_error($conn));
     }
 ?>
@@ -73,7 +86,7 @@
                     <img src="images/cursuri.png" alt="Cursuri" class="button-image">
                     <span>Classes</span>
                 </a>
-                <a href="stats.php" class="dashboard-button button-with-image">
+                <a href="student_statistic.php" class="dashboard-button button-with-image">
                     <img src="images/raport.png" alt="Rapoarte" class="button-image">
                     <span>Statistics</span>
                 </a>
@@ -129,7 +142,8 @@
                 }
             });
 
-            window.onload = function() {
+            window.onload = function()
+            {
                 if (formMessage && formMessage.textContent.trim() !== "") {
                     popup.style.display = 'flex';
                     formMessage.style.display = 'block';
