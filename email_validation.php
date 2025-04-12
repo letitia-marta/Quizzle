@@ -25,8 +25,8 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <link rel="stylesheet" href="css/style.css">
     </head>
-    <body>
 
+    <body>
         <?php
             if (isset($message)) {
                 foreach ($message as $message)
@@ -43,12 +43,10 @@
 
                 <input type="hidden" name="email" value="<?php echo isset($_POST['email']) ? $_POST['email'] : ''; ?>">
                 <input type="text" name="verification_code" placeholder="Introduceți codul de verificare" required class="box">
-
                 <input type="submit" name="verify_code" value="Verificare cod" class="btn">
 
                 <p>Nu ai un cont? <a href="register.php">Înregistrare</a></p>
             </form>
         </div>
-
     </body>
 </html>
