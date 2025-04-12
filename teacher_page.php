@@ -4,45 +4,53 @@
 
     $admin_id = $_SESSION['teacher_id'];
 
-    if (!isset($admin_id)) {
+    if (!isset($admin_id))
+    {
         header('location:login.php');
         exit;
     }
 
     $message = "";
 
-    function generateClassCode($length = 6) {
+    function generateClassCode($length = 6)
+    {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
         $randomCode = '';
-        for ($i = 0; $i < $length; $i++) {
+        for ($i = 0; $i < $length; $i++)
+        {
             $randomCode .= $characters[rand(0, $charactersLength - 1)];
         }
         return $randomCode;
     }
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_class'])) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_class']))
+    {
         $class_name = mysqli_real_escape_string($conn, $_POST['class_name']);
-        if (!empty($class_name)) {
-        
+        if (!empty($class_name))
+        {
             $class_code = generateClassCode();
 
-    
             $checkQuery = "SELECT class_code FROM classes WHERE class_code = '$class_code'";
             $result = mysqli_query($conn, $checkQuery);
-            while (mysqli_num_rows($result) > 0) {
+            while (mysqli_num_rows($result) > 0)
+            {
                 $class_code = generateClassCode();
                 $result = mysqli_query($conn, $checkQuery);
             }
 
-        
             $query = "INSERT INTO classes (class_name, teacher, class_code) VALUES ('$class_name', '$admin_id', '$class_code')";
-            if (mysqli_query($conn, $query)) {
+            if (mysqli_query($conn, $query))
+            {
                 $message = "Class created successfully!";
-            } else {
+            }
+            else
+            {
                 $message = "Failed to create class!";
             }
-        } else {
+        }
+        else
+        {
             $message = "Class name cannot be empty!";
         }
     }
@@ -59,7 +67,9 @@
     </head>
 
     <body>
-        <?php include 'teacher_header.php'; ?>
+        <?php
+            include 'teacher_header.php';
+        ?>
 
         <section class="dashboard">
             <div class="button-container">
@@ -71,7 +81,7 @@
                     <img src="images/test.png" alt="TestNou" class="button-image" style="margin-left: 17px">
                     <span>New test</span>
                 </a>
-                <a href="stats.php" class="dashboard-button button-with-image">
+                <a href="teacher_statistic.php" class="dashboard-button button-with-image">
                     <img src="images/raport.png" alt="Rapoarte" class="button-image">
                     <span>Statistics</span>
                 </a>
@@ -79,7 +89,6 @@
         </section>
 
         <a href="#" id="open-popup" class="plus">+<span class="tooltip-text">Create a class</span></a>
-
 
         <div class="popup" id="popup">
             <div class="popup-content">
@@ -99,12 +108,10 @@
         </div>
 
         <script>
-
             const popup = document.getElementById('popup');
             const openPopup = document.getElementById('open-popup');
             const closePopup = document.getElementById('close-popup');
             const formMessage = document.getElementById('form-message');
-
 
             openPopup.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -114,14 +121,12 @@
                 }
             });
 
-
             closePopup.addEventListener('click', () => {
                 popup.style.display = 'none';
                 if (formMessage) {
                     formMessage.style.display = 'none'; 
                 }
             });
-
 
             window.addEventListener('click', (event) => {
                 if (event.target === popup) {
@@ -132,14 +137,12 @@
                 }
             });
 
-
             window.onload = function() {
                 if (formMessage && formMessage.textContent.trim() !== "") {
                     popup.style.display = 'flex';
                     formMessage.style.display = 'block';
                 }
             };
-
         </script>
     </body>
 </html>
