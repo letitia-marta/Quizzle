@@ -4,57 +4,70 @@
 
     $student_id = $_SESSION['student_id'];
 
-    if (!isset($student_id)) {
+    if (!isset($student_id))
+    {
         header('location:login.php');
         exit;
     }
 
     $message = "";
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['join_class'])) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['join_class']))
+    {
         $class_code = mysqli_real_escape_string($conn, $_POST['class_code']);
-        if (!empty($class_code)) {
-
+        if (!empty($class_code))
+        {
             $class_query = "SELECT class_id FROM classes WHERE class_code = '$class_code'";
             $class_result = mysqli_query($conn, $class_query);
 
-            if (mysqli_num_rows($class_result) > 0) {
+            if (mysqli_num_rows($class_result) > 0)
+            {
                 $class_data = mysqli_fetch_assoc($class_result);
                 $class_id = $class_data['class_id'];
 
                 $check_enrollment = "SELECT * FROM student_classes WHERE user_id = '$student_id' AND class_id = '$class_id'";
                 $enrollment_result = mysqli_query($conn, $check_enrollment);
 
-                if (mysqli_num_rows($enrollment_result) == 0) {
-
+                if (mysqli_num_rows($enrollment_result) == 0)
+                {
                     $enrollment_date = date('Y-m-d H:i:s');
                     $enroll_query = "INSERT INTO student_classes (user_id, class_id, enrollment_date) VALUES ('$student_id', '$class_id', '$enrollment_date')";
 
-                    if (mysqli_query($conn, $enroll_query)) {
+                    if (mysqli_query($conn, $enroll_query))
+                    {
                         $message = "Successfully joined the class!";
-                    } else {
+                    }
+                    else
+                    {
                         $message = "Failed to join the class. Please try again.";
                     }
-                } else {
+                }
+                else
+                {
                     $message = "You are already enrolled in this class.";
                 }
-            } else {
+            }
+            else
+            {
                 $message = "Invalid class code. Please try again.";
             }
-        } else {
+        }
+        else
+        {
             $message = "Class code cannot be empty.";
         }
     }
 
-        $query = "
-            SELECT c.class_name, c.class_code, c.class_id 
-            FROM classes c
-            INNER JOIN student_classes sc ON c.class_id = sc.class_id
-            WHERE sc.user_id = '$student_id'
-        ";
+    $query = "
+        SELECT c.class_name, c.class_code, c.class_id 
+        FROM classes c
+        INNER JOIN student_classes sc ON c.class_id = sc.class_id
+        WHERE sc.user_id = '$student_id'
+    ";
     $result = mysqli_query($conn, $query);
 
-    if (!$result) {
+    if (!$result)
+    {
         die("Query failed: " . mysqli_error($conn)); 
     }
 ?>
@@ -67,29 +80,31 @@
         <title>Your Classes</title>
         <link rel="stylesheet" href="css/test.css">
     </head>
+
     <body>
         <?php include 'student_header.php'; ?>
 
         <section class="dashboard">
-
             <div class="student-list" style="display: flex; justify-content: center; align-items: center; margin-bottom:60px;">
                 <h3>Your Classes</h3>
             </div>
             
             <div class="class-grid">
                 <?php
-
-                if (mysqli_num_rows($result) > 0) {
-
-                    while ($row = mysqli_fetch_assoc($result)) {
-                        echo "<div class='class-card' onclick='window.location.href=\"student_class_details.php?class_id=" . $row['class_id'] . "\"'>
-                                <h3>" . htmlspecialchars($row['class_name']) . "</h3>
-                                <p>Class Code: " . htmlspecialchars($row['class_code']) . "</p>
-                            </div>";
+                    if (mysqli_num_rows($result) > 0)
+                    {
+                        while ($row = mysqli_fetch_assoc($result))
+                        {
+                            echo "<div class='class-card' onclick='window.location.href=\"student_class_details.php?class_id=" . $row['class_id'] . "\"'>
+                                    <h3>" . htmlspecialchars($row['class_name']) . "</h3>
+                                    <p>Class Code: " . htmlspecialchars($row['class_code']) . "</p>
+                                </div>";
+                        }
                     }
-                } else {
-                    echo "<p>You are not enrolled in any classes yet.</p>";
-                }
+                    else
+                    {
+                        echo "<p>You are not enrolled in any classes yet.</p>";
+                    }
                 ?>
             </div>
 
@@ -142,7 +157,8 @@
                     }
                 });
 
-                window.onload = function() {
+                window.onload = function()
+                {
                     if (formMessage && formMessage.textContent.trim() !== "") {
                         popup.style.display = 'flex';
                         formMessage.style.display = 'block';
