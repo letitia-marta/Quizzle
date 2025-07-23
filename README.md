@@ -4,8 +4,6 @@
 
 Designed to make online learning efficient and interactive, Quizzle automates grading and progress tracking while offering a clean, user-friendly experience.
 
----
-
 ## 🚀 Features
 
 ### 👨‍🏫 For Teachers:
@@ -18,8 +16,6 @@ Designed to make online learning efficient and interactive, Quizzle automates gr
 - 📊 **View Student Statistics**  
   Access individual and class-wide performance reports and analytics.
 
----
-
 ### 👩‍🎓 For Students:
 - 🏫 **Join Classes**  
   Enroll using class codes.
@@ -30,13 +26,9 @@ Designed to make online learning efficient and interactive, Quizzle automates gr
 - 📈 **Track Progress**  
   View personal scores and performance history.
 
----
-
 ## 🌐 Tech Stack
 
 - **Frontend**: HTML, CSS, JavaScript
 - **Backend**: PHP
 - **Database**: MySQL
 - **Authentication**: Role-based access (Student / Teacher)
-
----
